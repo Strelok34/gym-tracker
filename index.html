@@ -309,6 +309,307 @@ var MUSCLES={
   "5r6":"Neck · Upper Traps"
 };
 
+// Name-keyed muscles table covering all swap list exercises (~200 entries)
+var MUSCLE_NAMES={
+  // ── Chest ──
+  "close-grip bench press":"Triceps · Chest · Front Delts",
+  "incline barbell press":"Upper Chest · Front Delts · Triceps",
+  "low-incline barbell press":"Upper Chest · Front Delts · Triceps",
+  "pause bench press":"Chest · Triceps · Front Delts",
+  "db bench press":"Chest · Triceps · Front Delts",
+  "db incline press":"Upper Chest · Front Delts · Triceps",
+  "db floor press":"Chest · Triceps · Front Delts",
+  "db incline fly":"Upper Chest · Front Delts",
+  "db fly":"Chest · Front Delts",
+  "db pullover":"Lats · Chest · Serratus",
+  "cable chest press":"Chest · Triceps · Front Delts",
+  "low cable fly":"Lower Chest · Front Delts",
+  "high cable fly":"Upper Chest · Front Delts",
+  "cable incline fly":"Upper Chest · Front Delts",
+  "high-to-low cable fly":"Upper Chest · Front Delts",
+  "low-to-high cable fly":"Lower Chest · Front Delts",
+  "single-arm cable fly":"Chest · Front Delts",
+  "chest press machine":"Chest · Triceps · Front Delts",
+  "pec deck":"Chest · Front Delts",
+  "incline pec deck":"Upper Chest · Front Delts",
+  "incline chest machine":"Upper Chest · Triceps",
+  "smith machine press":"Chest · Triceps · Front Delts",
+  "weighted dip":"Chest · Triceps · Front Delts",
+  "archer push-up":"Chest · Triceps · Front Delts",
+  "incline push-up":"Upper Chest · Triceps · Front Delts",
+  "ring push-up":"Chest · Triceps · Core",
+  "wide push-up":"Chest · Front Delts",
+  "ring fly":"Chest · Front Delts · Core",
+  "chest dip":"Lower Chest · Triceps · Front Delts",
+  // ── Back ──
+  "pendlay row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "t-bar row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "seal row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "yates row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "db row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "single-arm db row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "chest-supported db row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "db kroc row":"Lats · Rhomboids · Traps · Biceps",
+  "wide cable row":"Lats · Rear Delts · Rhomboids",
+  "close-grip cable row":"Lats · Rhomboids · Biceps",
+  "wide-grip cable row":"Lats · Rear Delts",
+  "single-arm cable row":"Lats · Rhomboids · Rear Delts",
+  "hammer strength row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "mts row":"Lats · Rhomboids · Rear Delts",
+  "seated row machine":"Lats · Rhomboids · Rear Delts · Biceps",
+  "inverted row":"Lats · Rhomboids · Rear Delts · Biceps · Core",
+  "ring row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "barbell pullover":"Lats · Chest · Serratus",
+  "landmine row":"Lats · Rhomboids · Rear Delts · Biceps",
+  "cable pullover":"Lats · Serratus",
+  "straight-arm pushdown":"Lats · Serratus",
+  "straight-arm pulldown":"Lats · Serratus",
+  "wide-grip pulldown":"Lats · Rear Delts · Biceps",
+  "underhand pulldown":"Lats · Biceps",
+  "neutral-grip pulldown":"Lats · Biceps · Rear Delts",
+  "single-arm pulldown":"Lats · Biceps",
+  "hammer strength pulldown":"Lats · Biceps · Rear Delts",
+  "assisted pull-up":"Lats · Biceps · Rear Delts",
+  "pull-up":"Lats · Biceps · Rear Delts · Core",
+  "chin-up":"Lats · Biceps · Lower Traps",
+  "neutral-grip pull-up":"Lats · Biceps · Rear Delts",
+  "band-assisted pull-up":"Lats · Biceps · Rear Delts",
+  "negative pull-up":"Lats · Biceps · Rear Delts",
+  "band pull-apart":"Rear Delts · Rhomboids · Rotator Cuff",
+  "band row":"Lats · Rhomboids · Rear Delts",
+  // ── Shoulders ──
+  "push press":"Shoulders · Triceps · Traps · Quads",
+  "behind-the-neck press":"Shoulders · Triceps · Traps",
+  "z-press (floor seated)":"Shoulders · Triceps · Core",
+  "z-press":"Shoulders · Triceps · Core",
+  "db shoulder press":"Shoulders · Triceps · Upper Traps",
+  "arnold press":"Shoulders · Triceps · Front Delts",
+  "db push press":"Shoulders · Triceps · Quads",
+  "cable overhead press":"Shoulders · Triceps",
+  "single-arm cable press":"Shoulders · Triceps · Core",
+  "shoulder press machine":"Shoulders · Triceps",
+  "smith machine ohp":"Shoulders · Triceps",
+  "barbell ohp":"Shoulders · Triceps · Upper Traps",
+  "pike push-up":"Shoulders · Triceps",
+  "handstand push-up (wall)":"Shoulders · Triceps · Core",
+  "handstand push-up":"Shoulders · Triceps · Core",
+  "handstand hold":"Shoulders · Core",
+  "db lateral raise":"Lateral Delts · Traps",
+  "rear delt machine":"Rear Delts · Rhomboids",
+  "pec deck reverse":"Rear Delts · Rhomboids",
+  "db reverse fly":"Rear Delts · Rhomboids",
+  "db bent-over lateral":"Rear Delts · Rhomboids",
+  "db external rotation":"Rotator Cuff · Rear Delts",
+  "single-arm face pull":"Rear Delts · Rotator Cuff · Rhomboids",
+  "cable external rotation":"Rotator Cuff",
+  "cable rear delt fly":"Rear Delts · Rhomboids",
+  "band external rotation":"Rotator Cuff",
+  "trx reverse fly":"Rear Delts · Rhomboids · Core",
+  "wide-grip upright row":"Rear Delts · Traps · Lateral Delts",
+  "barbell rear delt row":"Rear Delts · Rhomboids",
+  // ── Triceps ──
+  "skull crushers":"Triceps",
+  "tate press":"Triceps",
+  "overhead db extension":"Triceps · Long Head",
+  "db kickback":"Triceps",
+  "db skull crusher":"Triceps",
+  "rope pushdown":"Triceps",
+  "single-arm pushdown":"Triceps",
+  "overhead cable extension":"Triceps · Long Head",
+  "tricep machine":"Triceps",
+  "dip machine":"Triceps · Chest",
+  "dip":"Triceps · Chest · Front Delts",
+  "bench dip":"Triceps",
+  "diamond push-up":"Triceps · Chest",
+  // ── Biceps ──
+  "barbell curl":"Biceps · Brachialis",
+  "drag curl":"Biceps · Long Head",
+  "reverse curl":"Brachialis · Brachioradialis · Biceps",
+  "db hammer curl":"Brachialis · Brachioradialis · Biceps",
+  "db incline curl":"Biceps · Long Head",
+  "db concentration curl":"Biceps",
+  "zottman curl":"Biceps · Brachialis · Brachioradialis",
+  "cable curl":"Biceps · Brachialis",
+  "single-arm cable curl":"Biceps",
+  "rope hammer curl":"Brachialis · Brachioradialis",
+  "preacher machine curl":"Biceps",
+  "converging curl machine":"Biceps · Brachialis",
+  "ring curl":"Biceps · Core",
+  "band curl":"Biceps",
+  // ── Legs — Quads ──
+  "front squat":"Quads · Glutes · Core",
+  "low-bar squat":"Quads · Glutes · Hamstrings · Erectors",
+  "pause squat":"Quads · Glutes · Core",
+  "box squat":"Quads · Glutes · Hamstrings",
+  "goblet squat":"Quads · Glutes · Core",
+  "db split squat":"Quads · Glutes · Hamstrings",
+  "zercher squat":"Quads · Glutes · Core · Biceps",
+  "cable squat":"Quads · Glutes",
+  "landmine squat":"Quads · Glutes · Core",
+  "hack squat":"Quads · Glutes",
+  "leg press":"Quads · Glutes · Hamstrings",
+  "smith machine squat":"Quads · Glutes",
+  "bulgarian split squat":"Quads · Glutes · Hamstrings",
+  "pistol squat":"Quads · Glutes · Core",
+  "jump squat":"Quads · Glutes · Calves",
+  "walking lunges":"Quads · Glutes · Hamstrings",
+  "reverse lunge":"Quads · Glutes · Hamstrings",
+  "split squat":"Quads · Glutes · Hamstrings",
+  "step-up":"Quads · Glutes",
+  "db step-up":"Quads · Glutes",
+  "db reverse lunge":"Quads · Glutes · Hamstrings",
+  "db lateral lunge":"Adductors · Quads · Glutes",
+  "landmine reverse lunge":"Quads · Glutes · Core",
+  "pendulum squat":"Quads · Glutes",
+  "sissy squat machine":"Quads",
+  "sissy squat":"Quads",
+  "wall sit":"Quads",
+  "tke band":"Quads · VMO",
+  "tke (terminal knee extension)":"Quads · VMO",
+  "single-leg press":"Quads · Glutes",
+  "single-leg extension":"Quads · VMO",
+  "rear-foot elevated split squat":"Quads · Glutes · Hamstrings",
+  "skater squat":"Quads · Glutes · Core",
+  "barbell hack squat":"Quads · Glutes",
+  "v-squat machine":"Quads · Glutes",
+  "db bulgarian split squat":"Quads · Glutes · Hamstrings",
+  // ── Legs — Posterior ──
+  "romanian deadlift":"Hamstrings · Glutes · Erectors",
+  "sumo deadlift":"Glutes · Hamstrings · Adductors · Quads",
+  "deficit deadlift":"Hamstrings · Glutes · Erectors · Quads",
+  "rack pull":"Traps · Erectors · Glutes · Hamstrings",
+  "stiff-leg deadlift":"Hamstrings · Glutes · Erectors",
+  "db romanian deadlift":"Hamstrings · Glutes · Erectors",
+  "db single-leg rdl":"Hamstrings · Glutes · Core",
+  "db deadlift":"Hamstrings · Glutes · Quads",
+  "cable pull-through":"Glutes · Hamstrings · Erectors",
+  "cable romanian deadlift":"Hamstrings · Glutes",
+  "trap bar deadlift":"Quads · Glutes · Hamstrings · Erectors",
+  "glute-ham raise":"Hamstrings · Glutes · Erectors",
+  "45-degree hyperextension":"Hamstrings · Glutes · Erectors",
+  "single-leg rdl":"Hamstrings · Glutes · Core",
+  "single-leg rdl (bodyweight)":"Hamstrings · Glutes · Core",
+  "good morning":"Hamstrings · Glutes · Erectors",
+  "good morning (bw)":"Hamstrings · Glutes · Erectors",
+  "snatch-grip rdl":"Hamstrings · Glutes · Erectors · Traps",
+  "nordic curl":"Hamstrings · Glutes",
+  "stability ball curl":"Hamstrings · Glutes · Core",
+  "single-leg curl":"Hamstrings",
+  "seated leg curl":"Hamstrings",
+  "lying leg curl":"Hamstrings",
+  "swiss ball leg curl":"Hamstrings · Glutes · Core",
+  "hip extension":"Glutes · Hamstrings",
+  "glute bridge":"Glutes · Hamstrings",
+  "single-leg glute bridge":"Glutes · Hamstrings · Core",
+  "frog pump":"Glutes · Adductors",
+  "donkey kick":"Glutes",
+  "banded hip thrust":"Glutes · Hamstrings",
+  "hip thrust with pause":"Glutes · Hamstrings",
+  "cable kickback":"Glutes",
+  "kneeling cable hip extension":"Glutes",
+  "machine hip thrust":"Glutes · Hamstrings",
+  "glute drive machine":"Glutes · Hamstrings",
+  "seated hip abduction":"Glutes · Hip Abductors",
+  // ── Adductors ──
+  "copenhagen hold":"Adductors · Core · Glutes",
+  "sumo squat":"Adductors · Quads · Glutes",
+  "cable hip adduction":"Adductors · Inner Thigh",
+  "standing cable adduction":"Adductors · Inner Thigh",
+  "inner thigh press":"Adductors",
+  "hip abductor machine":"Hip Abductors · Glutes",
+  "side-lying hip adduction":"Adductors",
+  "lateral band walk":"Hip Abductors · Glutes",
+  "sumo romanian deadlift":"Hamstrings · Glutes · Adductors",
+  "wide-stance squat":"Adductors · Quads · Glutes",
+  "wide squat":"Adductors · Quads · Glutes",
+  // ── Calves ──
+  "single-leg calf raise":"Calves · Soleus",
+  "db single-leg calf raise":"Calves · Soleus",
+  "db seated calf raise":"Soleus · Calves",
+  "leg press calf raise":"Calves",
+  "donkey calf raise":"Calves · Soleus",
+  "barbell calf raise":"Calves",
+  "cable calf raise":"Calves",
+  "jump rope":"Calves · Cardio",
+  "box jump":"Quads · Glutes · Calves",
+  "tibialis raise":"Tibialis Anterior",
+  // ── Power / Olympic ──
+  "hang power clean":"Traps · Glutes · Hamstrings · Quads · Shoulders",
+  "deadlift high pull":"Traps · Shoulders · Glutes · Hamstrings",
+  "power snatch":"Full Body · Traps · Shoulders · Glutes",
+  "clean pull":"Traps · Glutes · Hamstrings · Quads",
+  "db power clean":"Traps · Glutes · Shoulders",
+  "db hang clean":"Traps · Glutes · Shoulders",
+  "band pull-through":"Glutes · Hamstrings · Erectors",
+  "leg press (explosive)":"Quads · Glutes · Hamstrings",
+  "sled push":"Quads · Glutes · Calves · Core",
+  "broad jump":"Quads · Glutes · Calves",
+  "trap bar jump":"Quads · Glutes · Calves",
+  // ── Core ──
+  "pallof press":"Core · Obliques · Glutes",
+  "suitcase carry":"Core · Obliques · Traps",
+  "single-arm overhead carry":"Core · Shoulders · Obliques",
+  "db renegade row":"Core · Lats · Triceps",
+  "landmine rotation":"Core · Obliques · Shoulders",
+  "barbell rollout":"Core · Lats · Shoulders",
+  "ab wheel rollout":"Core · Lats · Shoulders",
+  "landmine rainbow":"Core · Obliques · Shoulders",
+  "cable crunch":"Abs · Core",
+  "kneeling cable crunch":"Abs · Core",
+  "tall-kneeling pallof":"Core · Obliques · Glutes",
+  "ab machine":"Abs · Core",
+  "roman chair sit-up":"Abs · Hip Flexors",
+  "hollow body hold":"Core · Hip Flexors",
+  "plank":"Core · Shoulders · Glutes",
+  "side plank":"Obliques · Core · Glutes",
+  "bird dog":"Core · Glutes · Erectors",
+  "v-up":"Abs · Hip Flexors",
+  "plank with reach":"Core · Shoulders · Obliques",
+  "half-kneeling cable chop":"Core · Obliques · Glutes",
+  "cable woodchop":"Core · Obliques",
+  "rotary torso machine":"Obliques · Core",
+  "db woodchop":"Core · Obliques",
+  "woodchop":"Core · Obliques",
+  "superman hold":"Erectors · Glutes",
+  "prone cobra":"Erectors · Rear Delts",
+  "bird dog":"Core · Glutes · Erectors",
+  "reverse hyperextension":"Glutes · Hamstrings · Erectors",
+  "ghd back extension":"Hamstrings · Glutes · Erectors",
+  "cable back extension":"Erectors · Glutes",
+  "45-degree hyper":"Erectors · Glutes · Hamstrings",
+  // ── Grip / Forearms ──
+  "farmer carry":"Forearms · Traps · Core · Quads",
+  "barbell hold (loaded)":"Forearms · Grip",
+  "barbell wrist curl":"Forearms · Wrist Flexors",
+  "db farmer carry":"Forearms · Traps · Core",
+  "plate pinch hold":"Forearms · Grip",
+  "db wrist roller":"Forearms",
+  "cable wrist curl":"Forearms · Wrist Flexors",
+  "single-arm cable hold":"Forearms · Grip",
+  "wrist roller machine":"Forearms",
+  "hand gripper":"Forearms · Grip",
+  "plate curls":"Forearms · Biceps",
+  "active hang (scapular)":"Lats · Forearms · Grip",
+  "towel pull-up":"Forearms · Lats · Biceps",
+  "rope climb":"Forearms · Lats · Biceps · Core",
+  // ── Neck / Traps ──
+  "trap bar shrug":"Upper Traps · Forearms",
+  "barbell shrug":"Upper Traps",
+  "barbell upright row":"Traps · Lateral Delts · Biceps",
+  "db shrug":"Upper Traps",
+  "cable shrug":"Upper Traps",
+  "band neck pull":"Neck · Upper Traps",
+  "neck harness":"Neck · Upper Traps",
+  "neck machine (4-way)":"Neck",
+  "band neck flexion":"Neck Flexors",
+  "partner neck resistance":"Neck",
+  "prone neck extension":"Neck Extensors · Upper Traps",
+  // ── Rider-specific ──
+  "sumo squat hold":"Adductors · Quads · Glutes",
+  "side-lying adduction":"Adductors · Inner Thigh",
+  "copenhagen hold (db)":"Adductors · Core · Glutes"
+};
+
 // ── STORAGE ───────────────────────────────────────────────────────────────────
 function lsG(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function lsS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -383,9 +684,6 @@ function loadProfileState(){
   S.swaps=lsG(pk("sw"))||{};
   S.customNames=lsG(pk("cn"))||{};
   S.logs=lsG(pk("lg"))||{};
-  // merge global muscle cache into state
-  var mc=lsG("gym_muscles")||{};
-  Object.keys(mc).forEach(function(k){S.muscleData[k]=mc[k];});
   var days=getProfileDays(getActiveId());
   S.activeDay=days[0]?days[0].id:null;
   S.editMode=false;S.addExOpen=false;S.newDayOpen=false;S.swapOpen=null;
@@ -517,52 +815,14 @@ function sparkSVG(pts){
   return'<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">'+bars+lbls+'</svg>';
 }
 
-// ── AI SUBSTITUTES ────────────────────────────────────────────────────────────
-function fetchMuscleInfo(name){
-  if(!name||!name.trim())return;
-  if(S.muscleData[name]&&S.muscleData[name]!=="loading")return;
-  var cache=lsG("gym_muscles")||{};
-  if(cache[name]){S.muscleData[name]=cache[name];return;}
-  S.muscleData[name]="loading";
-  fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:60,
-      messages:[{role:"user",content:"What primary muscles does '"+name+"' work? Reply with ONLY a comma-separated list of up to 5 muscle group names. Nothing else."}]
-    })
-  }).then(function(r){return r.json();})
-  .then(function(data){
-    var text=(data.content&&data.content[0])?data.content[0].text.trim():"";
-    var formatted=text.split(",").map(function(s){return s.trim();}).filter(Boolean).join(" · ");
-    if(formatted){
-      S.muscleData[name]=formatted;
-      cache[name]=formatted;lsS("gym_muscles",cache);
-      render();
-    } else {delete S.muscleData[name];}
-  }).catch(function(){delete S.muscleData[name];});
-}
-function fetchAIAlts(name){
-  if(!name||!name.trim())return;
-  var cached=lsG("gym_aicache")||{};
-  if(cached[name]){S.aiAlts[name]={loading:false,results:cached[name],error:null};render();return;}
-  S.aiAlts[name]={loading:true,results:[],error:null};render();
-  fetch("https://api.anthropic.com/v1/messages",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,
-      messages:[{role:"user",content:"List 8 exercise substitutes for '"+name+"' targeting the same muscles or movement pattern. Return ONLY a valid JSON array of strings, no markdown, no explanation. Example: [\"Squat\",\"Lunge\"]"}]
-    })
-  }).then(function(r){return r.json();})
-  .then(function(data){
-    try{
-      var text=(data.content&&data.content[0])?data.content[0].text:"[]";
-      var clean=text.replace(/```json|```/g,"").trim();
-      var results=JSON.parse(clean);
-      S.aiAlts[name]={loading:false,results:results,error:null};
-      cached[name]=results;lsS("gym_aicache",cached);
-    }catch(e){S.aiAlts[name]={loading:false,results:[],error:"Could not parse response"};}
-    render();
-  }).catch(function(){
-    S.aiAlts[name]={loading:false,results:[],error:"Request failed"};render();
-  });
+// ── MUSCLE LOOKUP (local, no API) ─────────────────────────────────────────────
+function getMuscles(name){
+  if(!name)return"";
+  // Check preset id-keyed table first
+  if(MUSCLES[name])return MUSCLES[name];
+  // Check name-keyed table (covers all swap list exercises)
+  var key=name.trim().toLowerCase();
+  return MUSCLE_NAMES[key]||"";
 }
 function useAIAlt(sk,exId,name){
   var parts=sk.split("_"),dId=parts[0];
@@ -571,9 +831,7 @@ function useAIAlt(sk,exId,name){
   var log=getLog(dId);var days=getDays();var day=days.find(function(d){return d.id===dId;});
   if(day){var ex=day.ex.find(function(e){return e.id===exId;});
     if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
-  lsS(pk("lg"),S.logs);
-  fetchMuscleInfo(name);
-  S.swapOpen=null;render();
+  lsS(pk("lg"),S.logs);S.swapOpen=null;render();
 }
 
 // ── SWAP PANEL ────────────────────────────────────────────────────────────────
@@ -611,32 +869,11 @@ function renderSwapPanel(ex,xi,dayId){
   var customVal=(curIdx===-1&&S.customNames[sk])?S.customNames[sk]:"";
   var customChosen=(curIdx===-1);
 
-  // AI substitutes section — shown when a custom exercise is active
-  var aiSection="";
+  // If custom exercise has a known muscle match, show it as a hint
+  var customMuscleHint="";
   if(customChosen&&customVal){
-    var safeVal=customVal.replace(/'/g,"&#39;");
-    var aiData=S.aiAlts[customVal]||null;
-    aiSection='<div class="swap-divider"></div>'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'+
-        '<span style="font-size:11px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">&#129302; AI substitutes for '+safeVal+'</span>'+
-        (!aiData||aiData.error?'<button class="swap-filter" onclick="fetchAIAlts(\''+safeVal+'\')">Find</button>':
-          (!aiData.loading?'<button class="swap-filter" onclick="fetchAIAlts(\''+safeVal+'\')">&#8635; Refresh</button>':"")+
-        "")+
-      '</div>';
-    if(!aiData){
-      aiSection+='<div style="text-align:center;padding:10px 0;font-size:13px;color:var(--faint)">Tap Find to get AI-suggested substitutes</div>';
-    } else if(aiData.loading){
-      aiSection+='<div style="text-align:center;padding:10px 0;font-size:13px;color:var(--faint)">&#8987; Finding substitutes...</div>';
-    } else if(aiData.error){
-      aiSection+='<div style="font-size:12px;color:var(--red);padding:4px 0">'+aiData.error+'</div>';
-    } else {
-      aiData.results.forEach(function(r){
-        var safeR=r.replace(/'/g,"&#39;");
-        aiSection+='<button class="swap-opt" onclick="useAIAlt(\''+sk+'\',\''+ex.id+'\',\''+safeR+'\')">'+
-          '<div class="swap-dot" style="background:var(--accent);border-color:var(--accent)"></div>'+r+
-          '<span style="font-size:10px;color:var(--faint);margin-left:auto;padding-left:6px">AI</span></button>';
-      });
-    }
+    var cm=getMuscles(customVal);
+    if(cm)customMuscleHint='<div style="font-size:11px;color:var(--gtx);background:var(--gbg);border:1px solid var(--gbd);border-radius:6px;padding:5px 9px;margin-top:6px">&#128170; '+cm+'</div>';
   }
 
   return'<div class="swap-panel">'+
@@ -651,7 +888,7 @@ function renderSwapPanel(ex,xi,dayId){
       '<input class="custom-ex-inp'+(customChosen?" chosen":"")+'" id="cex_'+sk+'" type="text" placeholder="e.g. Landmine Press..." value="'+customVal+'">'+
       '<button class="custom-ex-use" onclick="useCustomEx(\''+sk+'\',\''+ex.id+'\')">Use</button>'+
     '</div>'+
-    aiSection+
+    customMuscleHint+
     '</div>';
 }
 
@@ -695,16 +932,9 @@ function renderCard(day,ex,xi){
     (lw?'<div class="ex-last">Last: '+lw.w+' lbs ('+fmtDateS(lw.date)+')</div>':"");
   var tagHtml='<div class="ex-tags">'+(ex.ss?'<span class="sstag">SS Core</span>':'')+(ex.tag?'<span class="rtag">'+ex.tag+'</span>':'')+'</div>';
 
-  // Muscle groups — preset for original exercise, cached/fetched for swaps and customs
+  // Muscle groups — instant local lookup, no API
   var si2=swapIdx(day.id,xi);
-  var muscleStr="";
-  if(si2===0&&MUSCLES[ex.id]){
-    muscleStr=MUSCLES[ex.id];
-  } else {
-    var cached=S.muscleData[cn];
-    if(cached&&cached!=="loading"){muscleStr=cached;}
-    else if(!cached){fetchMuscleInfo(cn);}
-  }
+  var muscleStr=si2===0?getMuscles(ex.id):getMuscles(cn);
   var musclesHtml=muscleStr?'<div class="ex-muscles"><span class="ex-muscles-icon">&#128170;</span><span class="ex-muscles-text">'+muscleStr+'</span></div>':"";
   var totalAlts=flatAlts(ex).length-1;
 
@@ -939,10 +1169,7 @@ function pickSwap(sk,exId,idx){
   S.swaps[sk]=idx;lsS(pk("sw"),S.swaps);
   var log=getLog(dId);var days=getDays();var day=days.find(function(d){return d.id===dId;});
   if(day){var ex=day.ex.find(function(e){return e.id===exId;});
-    if(ex){
-      log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});
-      if(idx>0){var xi=day.ex.findIndex(function(e){return e.id===exId;});fetchMuscleInfo(exNameFromIdx(ex,dId,xi));}
-    }}
+    if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
   lsS(pk("lg"),S.logs);S.swapOpen=null;render();
 }
 function useCustomEx(sk,exId){
@@ -955,10 +1182,7 @@ function useCustomEx(sk,exId){
   var log=getLog(dId);var days=getDays();var day=days.find(function(d){return d.id===dId;});
   if(day){var ex=day.ex.find(function(e){return e.id===exId;});
     if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
-  lsS(pk("lg"),S.logs);
-  fetchAIAlts(val);
-  fetchMuscleInfo(val);
-  render();
+  lsS(pk("lg"),S.logs);S.swapOpen=null;render();
 }
 
 function updateWeight(dId,exId,si,val){
