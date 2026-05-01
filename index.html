@@ -89,6 +89,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-
 .ex-meta{font-size:12px;color:var(--muted);margin-top:2px}
 .ex-last{font-size:11px;color:var(--faint);margin-top:2px;font-style:italic}
 .ex-last.pr{color:var(--atx);font-style:normal;font-weight:700}
+.ex-muscles{font-size:11px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:4px}
+.ex-muscles-icon{font-size:10px}
+.ex-muscles-text{color:var(--muted)}
 .ex-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
 .rtag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:99px;background:var(--bbg);color:var(--btx)}
 .sstag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:99px;background:var(--ssbg);color:var(--sstx);font-weight:700}
@@ -272,6 +275,40 @@ var DEFAULT_PLAN=[
 
 var DAY_COLORS=["#e08010","#3a6fd8","#7c3aed","#059669","#dc2626","#0891b2"];
 
+// Preset muscle groups keyed by exercise id — shown instantly, no API call needed
+var MUSCLES={
+  "1e1":"Chest · Triceps · Front Delts",
+  "1e2":"Upper Chest · Triceps · Front Delts",
+  "1e3":"Lats · Rhomboids · Rear Delts · Biceps",
+  "1e4":"Lats · Biceps · Rear Delts",
+  "1e5":"Shoulders · Triceps · Upper Traps",
+  "1e6":"Triceps",
+  "2e1":"Quads · Glutes · Hamstrings · Core",
+  "2e2":"Traps · Glutes · Hamstrings · Full Body",
+  "2e3":"Quads · Glutes · Hamstrings",
+  "2e4":"Hamstrings · Glutes",
+  "2e5":"Quads",
+  "2e6":"Calves · Tibialis",
+  "3e1":"Lats · Rhomboids · Rear Delts · Biceps",
+  "3e2":"Lats · Biceps · Rear Delts · Core",
+  "3e3":"Shoulders · Triceps · Upper Traps",
+  "3e4":"Chest · Front Delts",
+  "3e5":"Biceps · Brachialis",
+  "3e6":"Rear Delts · Rotator Cuff · Rhomboids",
+  "4e1":"Hamstrings · Glutes · Erectors · Traps · Lats",
+  "4e2":"Glutes · Hamstrings",
+  "4e3":"Quads · Glutes",
+  "4e4":"Hamstrings · Glutes",
+  "4e5":"Adductors · Inner Thigh",
+  "4e6":"Soleus · Calves",
+  "5r1":"Forearms · Grip · Lats · Core",
+  "5r2":"Adductors · Core · Glutes",
+  "5r3":"Core · Obliques · Glutes",
+  "5r4":"Erectors · Glutes · Hamstrings",
+  "5r5":"Core · Hip Flexors · Transverse Abdominis",
+  "5r6":"Neck · Upper Traps"
+};
+
 // ── STORAGE ───────────────────────────────────────────────────────────────────
 function lsG(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
 function lsS(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -337,7 +374,8 @@ var S={
   editMode:false,addExOpen:false,newDayOpen:false,newDayColor:DAY_COLORS[0],
   calY:new Date().getFullYear(),calM:new Date().getMonth(),calSel:null,
   profileNewForm:false,showBnr:!lsG("gym_bn"),
-  aiAlts:{}
+  aiAlts:{},
+  muscleData:{}
 };
 
 function loadProfileState(){
@@ -345,6 +383,9 @@ function loadProfileState(){
   S.swaps=lsG(pk("sw"))||{};
   S.customNames=lsG(pk("cn"))||{};
   S.logs=lsG(pk("lg"))||{};
+  // merge global muscle cache into state
+  var mc=lsG("gym_muscles")||{};
+  Object.keys(mc).forEach(function(k){S.muscleData[k]=mc[k];});
   var days=getProfileDays(getActiveId());
   S.activeDay=days[0]?days[0].id:null;
   S.editMode=false;S.addExOpen=false;S.newDayOpen=false;S.swapOpen=null;
@@ -477,6 +518,28 @@ function sparkSVG(pts){
 }
 
 // ── AI SUBSTITUTES ────────────────────────────────────────────────────────────
+function fetchMuscleInfo(name){
+  if(!name||!name.trim())return;
+  if(S.muscleData[name]&&S.muscleData[name]!=="loading")return;
+  var cache=lsG("gym_muscles")||{};
+  if(cache[name]){S.muscleData[name]=cache[name];return;}
+  S.muscleData[name]="loading";
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:60,
+      messages:[{role:"user",content:"What primary muscles does '"+name+"' work? Reply with ONLY a comma-separated list of up to 5 muscle group names. Nothing else."}]
+    })
+  }).then(function(r){return r.json();})
+  .then(function(data){
+    var text=(data.content&&data.content[0])?data.content[0].text.trim():"";
+    var formatted=text.split(",").map(function(s){return s.trim();}).filter(Boolean).join(" · ");
+    if(formatted){
+      S.muscleData[name]=formatted;
+      cache[name]=formatted;lsS("gym_muscles",cache);
+      render();
+    } else {delete S.muscleData[name];}
+  }).catch(function(){delete S.muscleData[name];});
+}
 function fetchAIAlts(name){
   if(!name||!name.trim())return;
   var cached=lsG("gym_aicache")||{};
@@ -508,7 +571,9 @@ function useAIAlt(sk,exId,name){
   var log=getLog(dId);var days=getDays();var day=days.find(function(d){return d.id===dId;});
   if(day){var ex=day.ex.find(function(e){return e.id===exId;});
     if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
-  lsS(pk("lg"),S.logs);S.swapOpen=null;render();
+  lsS(pk("lg"),S.logs);
+  fetchMuscleInfo(name);
+  S.swapOpen=null;render();
 }
 
 // ── SWAP PANEL ────────────────────────────────────────────────────────────────
@@ -629,13 +694,25 @@ function renderCard(day,ex,xi){
   var lastLine=isPR?'<div class="ex-last pr">&#127942; PR today: '+prs[ex.id].w+' lbs!</div>':
     (lw?'<div class="ex-last">Last: '+lw.w+' lbs ('+fmtDateS(lw.date)+')</div>':"");
   var tagHtml='<div class="ex-tags">'+(ex.ss?'<span class="sstag">SS Core</span>':'')+(ex.tag?'<span class="rtag">'+ex.tag+'</span>':'')+'</div>';
+
+  // Muscle groups — preset for original exercise, cached/fetched for swaps and customs
+  var si2=swapIdx(day.id,xi);
+  var muscleStr="";
+  if(si2===0&&MUSCLES[ex.id]){
+    muscleStr=MUSCLES[ex.id];
+  } else {
+    var cached=S.muscleData[cn];
+    if(cached&&cached!=="loading"){muscleStr=cached;}
+    else if(!cached){fetchMuscleInfo(cn);}
+  }
+  var musclesHtml=muscleStr?'<div class="ex-muscles"><span class="ex-muscles-icon">&#128170;</span><span class="ex-muscles-text">'+muscleStr+'</span></div>':"";
   var totalAlts=flatAlts(ex).length-1;
 
   var h='<div class="card'+(S.editMode?" editing":"")+'">'+
     (S.editMode?'<button class="card-del-btn" onclick="delExercise(\''+day.id+'\',\''+ex.id+'\')">&#10005;</button>':"")+
     '<div class="card-hdr"><div class="card-left"><div class="ex-name">'+cn+'</div>'+
     '<div class="ex-meta">'+ex.sets+' sets &middot; '+ex.r+' reps &middot; rest '+fmtRest(ex.rest)+'</div>'+
-    tagHtml+lastLine+'</div>'+
+    tagHtml+musclesHtml+lastLine+'</div>'+
     '<div class="card-right"><span class="pill '+(allDone?"pG":"pg")+'">'+comp+"/"+ex.sets+'</span>'+
     '<div class="card-btns">'+
       '<a class="demo-btn" href="'+demoUrl(cn)+'" target="_blank" rel="noopener">&#9654; Demo</a>'+
@@ -862,7 +939,10 @@ function pickSwap(sk,exId,idx){
   S.swaps[sk]=idx;lsS(pk("sw"),S.swaps);
   var log=getLog(dId);var days=getDays();var day=days.find(function(d){return d.id===dId;});
   if(day){var ex=day.ex.find(function(e){return e.id===exId;});
-    if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
+    if(ex){
+      log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});
+      if(idx>0){var xi=day.ex.findIndex(function(e){return e.id===exId;});fetchMuscleInfo(exNameFromIdx(ex,dId,xi));}
+    }}
   lsS(pk("lg"),S.logs);S.swapOpen=null;render();
 }
 function useCustomEx(sk,exId){
@@ -876,8 +956,8 @@ function useCustomEx(sk,exId){
   if(day){var ex=day.ex.find(function(e){return e.id===exId;});
     if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
   lsS(pk("lg"),S.logs);
-  // auto-fetch AI substitutes for the custom exercise
   fetchAIAlts(val);
+  fetchMuscleInfo(val);
   render();
 }
 
