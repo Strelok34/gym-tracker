@@ -336,7 +336,8 @@ var S={
   swaps:{},customNames:{},logs:{},timers:{},
   editMode:false,addExOpen:false,newDayOpen:false,newDayColor:DAY_COLORS[0],
   calY:new Date().getFullYear(),calM:new Date().getMonth(),calSel:null,
-  profileNewForm:false,showBnr:!lsG("gym_bn")
+  profileNewForm:false,showBnr:!lsG("gym_bn"),
+  aiAlts:{}
 };
 
 function loadProfileState(){
@@ -475,6 +476,41 @@ function sparkSVG(pts){
   return'<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">'+bars+lbls+'</svg>';
 }
 
+// ── AI SUBSTITUTES ────────────────────────────────────────────────────────────
+function fetchAIAlts(name){
+  if(!name||!name.trim())return;
+  var cached=lsG("gym_aicache")||{};
+  if(cached[name]){S.aiAlts[name]={loading:false,results:cached[name],error:null};render();return;}
+  S.aiAlts[name]={loading:true,results:[],error:null};render();
+  fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({model:"claude-sonnet-4-20250514",max_tokens:400,
+      messages:[{role:"user",content:"List 8 exercise substitutes for '"+name+"' targeting the same muscles or movement pattern. Return ONLY a valid JSON array of strings, no markdown, no explanation. Example: [\"Squat\",\"Lunge\"]"}]
+    })
+  }).then(function(r){return r.json();})
+  .then(function(data){
+    try{
+      var text=(data.content&&data.content[0])?data.content[0].text:"[]";
+      var clean=text.replace(/```json|```/g,"").trim();
+      var results=JSON.parse(clean);
+      S.aiAlts[name]={loading:false,results:results,error:null};
+      cached[name]=results;lsS("gym_aicache",cached);
+    }catch(e){S.aiAlts[name]={loading:false,results:[],error:"Could not parse response"};}
+    render();
+  }).catch(function(){
+    S.aiAlts[name]={loading:false,results:[],error:"Request failed"};render();
+  });
+}
+function useAIAlt(sk,exId,name){
+  var parts=sk.split("_"),dId=parts[0];
+  S.swaps[sk]=-1;S.customNames[sk]=name;
+  lsS(pk("sw"),S.swaps);lsS(pk("cn"),S.customNames);
+  var log=getLog(dId);var days=getDays();var day=days.find(function(d){return d.id===dId;});
+  if(day){var ex=day.ex.find(function(e){return e.id===exId;});
+    if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
+  lsS(pk("lg"),S.logs);S.swapOpen=null;render();
+}
+
 // ── SWAP PANEL ────────────────────────────────────────────────────────────────
 function renderSwapPanel(ex,xi,dayId){
   var sk=dayId+"_"+xi;
@@ -510,7 +546,39 @@ function renderSwapPanel(ex,xi,dayId){
   var customVal=(curIdx===-1&&S.customNames[sk])?S.customNames[sk]:"";
   var customChosen=(curIdx===-1);
 
+  // AI substitutes section — shown when a custom exercise is active
+  var aiSection="";
+  if(customChosen&&customVal){
+    var safeVal=customVal.replace(/'/g,"&#39;");
+    var aiData=S.aiAlts[customVal]||null;
+    aiSection='<div class="swap-divider"></div>'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">'+
+        '<span style="font-size:11px;color:var(--faint);font-weight:600;text-transform:uppercase;letter-spacing:.05em">&#129302; AI substitutes for '+safeVal+'</span>'+
+        (!aiData||aiData.error?'<button class="swap-filter" onclick="fetchAIAlts(\''+safeVal+'\')">Find</button>':
+          (!aiData.loading?'<button class="swap-filter" onclick="fetchAIAlts(\''+safeVal+'\')">&#8635; Refresh</button>':"")+
+        "")+
+      '</div>';
+    if(!aiData){
+      aiSection+='<div style="text-align:center;padding:10px 0;font-size:13px;color:var(--faint)">Tap Find to get AI-suggested substitutes</div>';
+    } else if(aiData.loading){
+      aiSection+='<div style="text-align:center;padding:10px 0;font-size:13px;color:var(--faint)">&#8987; Finding substitutes...</div>';
+    } else if(aiData.error){
+      aiSection+='<div style="font-size:12px;color:var(--red);padding:4px 0">'+aiData.error+'</div>';
+    } else {
+      aiData.results.forEach(function(r){
+        var safeR=r.replace(/'/g,"&#39;");
+        aiSection+='<button class="swap-opt" onclick="useAIAlt(\''+sk+'\',\''+ex.id+'\',\''+safeR+'\')">'+
+          '<div class="swap-dot" style="background:var(--accent);border-color:var(--accent)"></div>'+r+
+          '<span style="font-size:10px;color:var(--faint);margin-left:auto;padding-left:6px">AI</span></button>';
+      });
+    }
+  }
+
   return'<div class="swap-panel">'+
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'+
+      '<span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em">Swap exercise</span>'+
+      '<button onclick="toggleSwap(\''+sk+'\')" style="background:var(--border);border:none;border-radius:99px;padding:3px 10px;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;font-weight:600">&#10005; Close</button>'+
+    '</div>'+
     (cats.length>2?filterRow:"")+opts+
     '<div class="swap-divider"></div>'+
     '<div style="font-size:11px;color:var(--faint);margin-bottom:7px;font-weight:600;text-transform:uppercase;letter-spacing:.05em">Or type any exercise</div>'+
@@ -518,6 +586,7 @@ function renderSwapPanel(ex,xi,dayId){
       '<input class="custom-ex-inp'+(customChosen?" chosen":"")+'" id="cex_'+sk+'" type="text" placeholder="e.g. Landmine Press..." value="'+customVal+'">'+
       '<button class="custom-ex-use" onclick="useCustomEx(\''+sk+'\',\''+ex.id+'\')">Use</button>'+
     '</div>'+
+    aiSection+
     '</div>';
 }
 
@@ -806,7 +875,10 @@ function useCustomEx(sk,exId){
   var log=getLog(dId);var days=getDays();var day=days.find(function(d){return d.id===dId;});
   if(day){var ex=day.ex.find(function(e){return e.id===exId;});
     if(ex)log[exId]=Array.from({length:ex.sets},function(){return{w:"",done:false};});}
-  lsS(pk("lg"),S.logs);S.swapOpen=null;render();
+  lsS(pk("lg"),S.logs);
+  // auto-fetch AI substitutes for the custom exercise
+  fetchAIAlts(val);
+  render();
 }
 
 function updateWeight(dId,exId,si,val){
